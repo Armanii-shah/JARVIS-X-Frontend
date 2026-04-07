@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { useTheme } from 'next-themes'
 import type { User } from '@supabase/supabase-js'
+import { ThemeToggle } from '@/components/theme-toggle'
 import type { Profile, Alert } from '@/lib/types'
 import { Button } from '@/components/ui/button'
 import {
@@ -27,8 +27,6 @@ import {
   AlertTriangle,
   Info,
   CheckCircle,
-  Sun,
-  Moon,
 } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { formatDistanceToNow } from 'date-fns'
@@ -56,7 +54,6 @@ function AlertIcon({ alert }: { alert: Alert }) {
 }
 
 export function DashboardHeader({ user, profile, token, backendUrl }: DashboardHeaderProps) {
-  const { theme, setTheme } = useTheme()
   const [isLoggingOut, setIsLoggingOut] = useState(false)
   const [alerts, setAlerts] = useState<Alert[]>([])
 
@@ -134,14 +131,7 @@ export function DashboardHeader({ user, profile, token, backendUrl }: DashboardH
         </div>
 
         {/* Theme Toggle */}
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-          title="Toggle theme"
-        >
-          {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-        </Button>
+        <ThemeToggle />
 
         {/* Notifications */}
         <DropdownMenu>

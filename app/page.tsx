@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { ThemeToggle } from '@/components/theme-toggle'
 import {
   Shield,
   Mail,
@@ -11,7 +12,6 @@ import {
   CheckCircle,
   ArrowRight,
   Star,
-  Users,
 } from 'lucide-react'
 
 const features = [
@@ -103,6 +103,7 @@ export default function LandingPage() {
               </Link>
             </div>
             <div className="flex items-center gap-3">
+              <ThemeToggle />
               <Button variant="ghost" asChild>
                 <Link href="/auth/login">Sign In</Link>
               </Button>

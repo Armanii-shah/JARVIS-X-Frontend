@@ -135,11 +135,11 @@ export function AlertsView({ alerts: initial, token, backendUrl }: AlertsViewPro
 
       {/* Alerts List */}
       <Card className="border-border/50">
-        <CardHeader className="flex flex-row items-center justify-between">
+        <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <CardTitle className="text-lg">All Alerts</CardTitle>
           <div className="flex items-center gap-2">
             {unreadCount > 0 && (
-              <Button variant="outline" size="sm" onClick={markAllRead}>
+              <Button variant="outline" size="sm" onClick={markAllRead} className="flex-1 sm:flex-none">
                 <CheckCheck className="w-4 h-4 mr-2" />
                 Mark All Read
               </Button>
@@ -148,7 +148,7 @@ export function AlertsView({ alerts: initial, token, backendUrl }: AlertsViewPro
               <Button
                 variant="outline"
                 size="sm"
-                className="text-destructive hover:text-destructive"
+                className="text-destructive hover:text-destructive flex-1 sm:flex-none"
                 onClick={clearAll}
               >
                 <Trash2 className="w-4 h-4 mr-2" />

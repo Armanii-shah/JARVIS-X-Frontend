@@ -27,6 +27,7 @@ import {
   AlertTriangle,
   Info,
   CheckCircle,
+  Menu,
 } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { formatDistanceToNow } from 'date-fns'
@@ -36,6 +37,7 @@ interface DashboardHeaderProps {
   profile: Profile | null
   token: string
   backendUrl: string
+  onMenuClick?: () => void
 }
 
 function alertDot(alert: Alert) {
@@ -53,7 +55,7 @@ function AlertIcon({ alert }: { alert: Alert }) {
   return <Info className="w-3.5 h-3.5 text-primary" />
 }
 
-export function DashboardHeader({ user, profile, token, backendUrl }: DashboardHeaderProps) {
+export function DashboardHeader({ user, profile, token, backendUrl, onMenuClick }: DashboardHeaderProps) {
   const [isLoggingOut, setIsLoggingOut] = useState(false)
   const [alerts, setAlerts] = useState<Alert[]>([])
 
@@ -110,10 +112,19 @@ export function DashboardHeader({ user, profile, token, backendUrl }: DashboardH
     : user.email?.charAt(0).toUpperCase() || 'U'
 
   return (
-    <header className="h-16 bg-card border-b border-border flex items-center justify-between px-6">
-      {/* Search */}
-      <div className="flex items-center gap-4 flex-1 max-w-xl">
-        <div className="relative flex-1">
+    <header className="h-16 bg-card border-b border-border flex items-center justify-between px-4 lg:px-6">
+      {/* Left: hamburger (mobile) + search (desktop) */}
+      <div className="flex items-center gap-3 flex-1 max-w-xl">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="lg:hidden shrink-0"
+          onClick={onMenuClick}
+          aria-label="Open menu"
+        >
+          <Menu className="w-5 h-5" />
+        </Button>
+        <div className="relative flex-1 hidden lg:flex">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
             placeholder="Search emails, threats, alerts..."

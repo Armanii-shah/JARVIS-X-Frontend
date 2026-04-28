@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
-import type { User } from '@supabase/supabase-js'
 import type { Profile } from '@/lib/types'
 import {
   Shield,
@@ -17,13 +16,14 @@ import {
   Users,
   History,
   ShieldAlert,
+  ShieldOff,
 } from 'lucide-react'
 
 interface DashboardSidebarProps {
-  user: User
   profile: Profile | null
   token: string
   backendUrl: string
+  onNavClick?: () => void
 }
 
 const mainNavItems = [
@@ -33,6 +33,7 @@ const mainNavItems = [
   { href: '/dashboard/alerts', label: 'Alerts', icon: Bell },
   { href: '/dashboard/analytics', label: 'Analytics', icon: BarChart3 },
   { href: '/dashboard/scan-history', label: 'Scan History', icon: History },
+  { href: '/dashboard/blocked', label: 'Blocked', icon: ShieldOff },
 ]
 
 const adminNavItems = [
@@ -40,7 +41,7 @@ const adminNavItems = [
   { href: '/dashboard/admin/users', label: 'User Management', icon: Users },
 ]
 
-export function DashboardSidebar({ profile, token, backendUrl }: DashboardSidebarProps) {
+export function DashboardSidebar({ profile, token, backendUrl, onNavClick }: DashboardSidebarProps) {
   const pathname = usePathname()
   const isAdmin = profile?.role === 'admin'
   const [unreadCount, setUnreadCount] = useState(0)
@@ -89,12 +90,13 @@ export function DashboardSidebar({ profile, token, backendUrl }: DashboardSideba
             Main Menu
           </p>
           {mainNavItems.map((item) => {
-            const isActive = pathname === item.href || 
+            const isActive = pathname === item.href ||
               (item.href !== '/dashboard' && pathname.startsWith(item.href))
             return (
               <Link
                 key={item.href}
                 href={item.href}
+                onClick={onNavClick}
                 className={cn(
                   'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all',
                   isActive
@@ -125,6 +127,7 @@ export function DashboardSidebar({ profile, token, backendUrl }: DashboardSideba
                 <Link
                   key={item.href}
                   href={item.href}
+                  onClick={onNavClick}
                   className={cn(
                     'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all',
                     isActive
@@ -145,6 +148,7 @@ export function DashboardSidebar({ profile, token, backendUrl }: DashboardSideba
       <div className="p-4 border-t border-sidebar-border">
         <Link
           href="/dashboard/settings"
+          onClick={onNavClick}
           className={cn(
             'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all',
             pathname === '/dashboard/settings'

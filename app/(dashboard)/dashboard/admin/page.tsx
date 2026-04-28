@@ -1,27 +1,14 @@
 import { redirect } from 'next/navigation'
-import { createClient } from '@/lib/supabase/server'
+import { cookies } from 'next/headers'
 import { AdminDashboard } from '@/components/dashboard/admin-dashboard'
 
 export default async function AdminPage() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const cookieStore = await cookies()
+  const token = cookieStore.get('jarvis_token')?.value
 
-  if (!user) {
+  if (!token) {
     redirect('/auth/login')
   }
-
-  // Check if user is admin
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('role')
-    .eq('id', user.id)
-    .single()
-
-  // For demo purposes, allow access but show limited data
-  // In production, uncomment the redirect below
-  // if (profile?.role !== 'admin') {
-  //   redirect('/dashboard')
-  // }
 
   return (
     <div className="space-y-6">

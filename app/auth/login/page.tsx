@@ -2,7 +2,12 @@
 import { useEffect } from 'react'
 export default function LoginPage() {
   useEffect(() => {
-    window.location.href = process.env.NEXT_PUBLIC_BACKEND_URL + '/auth/gmail'
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL
+    if (!backendUrl) {
+      console.error('[Auth] NEXT_PUBLIC_BACKEND_URL is not set — cannot redirect to Gmail OAuth')
+      return
+    }
+    window.location.href = backendUrl + '/auth/gmail'
   }, [])
   return <div>Redirecting to Gmail...</div>
 }

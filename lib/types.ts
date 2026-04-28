@@ -24,14 +24,16 @@ export interface Email {
   user_id: string
   email_account_id: string | null
   external_id: string | null
-  sender_email: string
+  gmail_message_id: string | null
+  sender: string | null        // full display string e.g. "John Doe <john@example.com>"
+  sender_email: string | null
   sender_name: string | null
   subject: string | null
   body_preview: string | null
-  received_at: string
-  scanned_at: string
-  risk_score: number
-  score?: number  // backend polling service stores as 'score', frontend schema uses 'risk_score'
+  received_at: string | null
+  scanned_at: string | null
+  risk_score: number | null
+  score: number | null
   threat_level: 'low' | 'medium' | 'high'
   is_read: boolean
   created_at: string
@@ -89,6 +91,18 @@ export interface AnalyticsDaily {
   threats_high: number
   alerts_sent: number
   created_at: string
+}
+
+export interface SpamEmail {
+  gmail_message_id: string
+  subject: string | null
+  sender: string | null
+  sender_email: string | null
+  sender_name: string | null
+  score: number
+  threat_level: 'low' | 'medium' | 'high'
+  received_at: string | null
+  is_blocked: boolean
 }
 
 export interface DashboardStats {

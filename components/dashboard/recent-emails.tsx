@@ -9,6 +9,17 @@ import { formatDistanceToNow } from 'date-fns'
 import { ArrowRight, Mail, ShieldCheck, ShieldAlert, Shield } from 'lucide-react'
 import type { Email } from '@/lib/types'
 
+function getSenderDisplay(email: Email): string {
+  if (email.sender_name) return email.sender_name
+  if (email.sender_email) return email.sender_email
+  if (email.sender) {
+    const match = email.sender.match(/<([^>]+)>/)
+    const name = match ? email.sender.slice(0, email.sender.indexOf('<')).trim() : ''
+    return name || (match ? match[1] : email.sender)
+  }
+  return 'Unknown'
+}
+
 interface RecentEmailsProps {
   emails: Email[]
 }
@@ -89,7 +100,7 @@ export function RecentEmails({ emails }: RecentEmailsProps) {
                         {email.subject || '(No Subject)'}
                       </h4>
                       <p className="text-xs text-muted-foreground mt-0.5">
-                        From: {email.sender_name || email.sender_email}
+                        From: {getSenderDisplay(email)}
                       </p>
                     </div>
                     <Badge

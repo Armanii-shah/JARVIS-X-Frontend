@@ -1,8 +1,6 @@
 import { redirect } from 'next/navigation'
 import { cookies } from 'next/headers'
-import { DashboardSidebar } from '@/components/dashboard/sidebar'
-import { DashboardHeader } from '@/components/dashboard/header'
-import { OnboardingModal } from '@/components/dashboard/onboarding-modal'
+import { DashboardShell } from '@/components/dashboard/dashboard-shell'
 import type { Profile } from '@/lib/types'
 
 export default async function DashboardLayout({
@@ -36,17 +34,14 @@ export default async function DashboardLayout({
   const user = { id: profile?.id ?? '', email: userEmail ?? '' } as any
 
   return (
-    <div className="flex h-screen bg-background">
-      {!onboarded && (
-        <OnboardingModal token={token ?? ''} backendUrl={backendUrl} />
-      )}
-      <DashboardSidebar user={user} profile={profile} token={token ?? ''} backendUrl={backendUrl} />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <DashboardHeader user={user} profile={profile} token={token ?? ''} backendUrl={backendUrl} />
-        <main className="flex-1 overflow-auto p-6">
-          {children}
-        </main>
-      </div>
-    </div>
+    <DashboardShell
+      profile={profile}
+      user={user}
+      token={token ?? ''}
+      backendUrl={backendUrl}
+      showOnboarding={!onboarded}
+    >
+      {children}
+    </DashboardShell>
   )
 }

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -18,6 +19,7 @@ interface SettingsViewProps {
 }
 
 export function SettingsView({ email, phone, plan, token, backendUrl }: SettingsViewProps) {
+  const router = useRouter()
   const [isSaving, setIsSaving] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
   const [saveSuccess, setSaveSuccess] = useState(false)
@@ -50,20 +52,21 @@ export function SettingsView({ email, phone, plan, token, backendUrl }: Settings
     {
       name: 'Free',
       price: '$0',
-      features: ['100 emails/day', 'Basic threat detection', 'Dashboard alerts', 'Email support'],
+      features: ['10 emails/day', 'Basic threat detection', 'Dashboard alerts', 'Email support'],
       current: !plan || plan === 'free',
     },
     {
       name: 'Pro',
-      price: '$29',
-      features: ['Unlimited emails', 'Advanced AI detection', 'SMS & Push alerts', 'Priority support', 'API access'],
+      price: '$20',
+      features: ['100 emails/day', 'Advanced AI detection', 'SMS & Push alerts', 'Priority support', 'API access'],
       current: plan === 'pro',
       popular: true,
+      
     },
     {
       name: 'Enterprise',
       price: 'Custom',
-      features: ['Everything in Pro', 'Custom integrations', 'Dedicated support', 'SLA guarantee', 'On-premise option'],
+      features: ['Unlimited emails','Everything in Pro', 'Custom integrations', 'Dedicated support', 'SLA guarantee', 'On-premise option'],
       current: plan === 'enterprise',
     },
   ]
@@ -182,7 +185,7 @@ export function SettingsView({ email, phone, plan, token, backendUrl }: Settings
                       )}
                     </p>
                   </div>
-                  <ul className="space-y-2">
+                  <ul className="space-y-2 mb-5">
                     {p.features.map((feature) => (
                       <li key={feature} className="flex items-center gap-2 text-sm">
                         <Check className="w-4 h-4 text-green-500 shrink-0" />
@@ -190,6 +193,16 @@ export function SettingsView({ email, phone, plan, token, backendUrl }: Settings
                       </li>
                     ))}
                   </ul>
+                  {p.name === 'Pro' && !p.current && (
+                    <Button className="w-full" onClick={() => router.push('/dashboard/upgrade')}>
+                      Upgrade to Pro
+                    </Button>
+                  )}
+                  {p.name === 'Enterprise' && !p.current && (
+                    <Button variant="outline" className="w-full" onClick={() => router.push('/dashboard/upgrade')}>
+                      Contact Sales
+                    </Button>
+                  )}
                 </div>
               ))}
             </div>

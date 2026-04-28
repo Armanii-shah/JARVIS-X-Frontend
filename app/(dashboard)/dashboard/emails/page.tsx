@@ -4,22 +4,32 @@ import type { Email } from '@/lib/types'
 
 export default async function EmailsPage() {
   const cookieStore = await cookies()
-  const token = cookieStore.get('jarvis_token')?.value
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL
+  const token = cookieStore.get('jarvis_token')?.value ?? ''
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL ?? ''
 
   let emails: Email[] = []
+  let blockedSenderEmails: string[] = []
 
   if (token) {
-    try {
-      const res = await fetch(`${backendUrl}/email/history`, {
+    const [inboxRes, blockedRes] = await Promise.all([
+      fetch(`${backendUrl}/email/history`, {
         cache: 'no-store',
         headers: { Authorization: `Bearer ${token}` },
-      })
-      if (res.ok) {
-        const data = await res.json()
-        emails = Array.isArray(data) ? data : (data.emails ?? data.data ?? [])
-      }
-    } catch {}
+      }).catch(() => null),
+      fetch(`${backendUrl}/blocked`, {
+        cache: 'no-store',
+        headers: { Authorization: `Bearer ${token}` },
+      }).catch(() => null),
+    ])
+
+    if (inboxRes?.ok) {
+      const data = await inboxRes.json().catch(() => [])
+      emails = Array.isArray(data) ? data : []
+    }
+    if (blockedRes?.ok) {
+      const data = await blockedRes.json().catch(() => ({}))
+      blockedSenderEmails = (data?.blocked ?? []).map((b: { sender_email: string }) => b.sender_email)
+    }
   }
 
   return (
@@ -31,7 +41,12 @@ export default async function EmailsPage() {
         </p>
       </div>
 
-      <EmailsTable emails={emails} />
+      <EmailsTable
+        emails={emails}
+        blockedSenderEmails={blockedSenderEmails}
+        token={token}
+        backendUrl={backendUrl}
+      />
     </div>
   )
 }

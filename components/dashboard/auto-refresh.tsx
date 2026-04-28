@@ -11,7 +11,7 @@ export function AutoRefresh({ intervalMs = 30000 }: { intervalMs?: number }) {
       router.refresh()
     }, intervalMs)
     return () => clearInterval(id)
-  }, [router, intervalMs])
+  }, [intervalMs])
 
   return null
 }

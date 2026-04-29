@@ -43,6 +43,8 @@ import {
   RefreshCw,
   ShieldOff,
   RotateCcw,
+  Trash2,
+  Loader2,
 } from 'lucide-react'
 import type { Email, SpamEmail } from '@/lib/types'
 
@@ -125,6 +127,11 @@ export function EmailsTable({ emails, blockedSenderEmails, token, backendUrl }: 
   const [blockTarget, setBlockTarget] = useState<{ email: string; name: string } | null>(null)
   const [blocking, setBlocking] = useState(false)
 
+  // Delete dialog state
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; subject: string } | null>(null)
+  const [deleting, setDeleting] = useState(false)
+  const [deletedIds, setDeletedIds] = useState<Set<string>>(new Set())
+
   // Spam: lazy-loaded on first tab click, cached thereafter
   const [spamEmails, setSpamEmails] = useState<SpamEmail[]>([])
   const [spamLoading, setSpamLoading] = useState(false)
@@ -175,6 +182,23 @@ export function EmailsTable({ emails, blockedSenderEmails, token, backendUrl }: 
     }
   }
 
+  async function confirmDelete() {
+    if (!deleteTarget) return
+    setDeleting(true)
+    try {
+      const res = await fetch(`${backendUrl}/email/${deleteTarget.id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      if (res.ok) {
+        setDeletedIds(prev => new Set([...prev, deleteTarget.id]))
+      }
+    } finally {
+      setDeleting(false)
+      setDeleteTarget(null)
+    }
+  }
+
   async function handleRescue(gmailMessageId: string) {
     setRescuingId(gmailMessageId)
     try {
@@ -195,6 +219,7 @@ export function EmailsTable({ emails, blockedSenderEmails, token, backendUrl }: 
   // ── Inbox filtering ──────────────────────────────────────────────────────
   const filteredInbox = emails.filter(email => {
     const { name, address } = parseSender(email)
+    if (deletedIds.has(email.id)) return false
     if (blockedSet.has(address.toLowerCase())) return false
     const matchesSearch =
       email.subject?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -233,6 +258,27 @@ export function EmailsTable({ emails, blockedSenderEmails, token, backendUrl }: 
             <Button variant="outline" onClick={() => setBlockTarget(null)} disabled={blocking}>Cancel</Button>
             <Button variant="destructive" onClick={confirmBlock} disabled={blocking}>
               {blocking ? 'Blocking…' : 'Block Sender'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete email confirmation dialog */}
+      <Dialog open={!!deleteTarget} onOpenChange={open => { if (!open) setDeleteTarget(null) }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Trash2 className="w-5 h-5 text-destructive" />
+              Delete Email
+            </DialogTitle>
+            <DialogDescription>
+              This will permanently delete <strong>&ldquo;{deleteTarget?.subject}&rdquo;</strong> from your dashboard and move it to Trash in Gmail. This cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleteTarget(null)} disabled={deleting}>Cancel</Button>
+            <Button variant="destructive" onClick={confirmDelete} disabled={deleting}>
+              {deleting ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Deleting…</> : <><Trash2 className="w-4 h-4 mr-2" />Delete</>}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -287,6 +333,7 @@ export function EmailsTable({ emails, blockedSenderEmails, token, backendUrl }: 
                 rescuingId={rescuingId}
                 onBlock={setBlockTarget}
                 onRescue={handleRescue}
+                onDelete={(id, subject) => setDeleteTarget({ id, subject })}
               />
               {filteredInbox.length === 0 && <EmptyState />}
               <Pagination
@@ -357,9 +404,10 @@ interface EmailRowsTableProps {
   rescuingId: string | null
   onBlock: (target: { email: string; name: string }) => void
   onRescue: (gmailMessageId: string) => void
+  onDelete?: (id: string, subject: string) => void
 }
 
-function EmailRowsTable({ items, isSpam, blockedSet, rescuingId, onBlock, onRescue }: EmailRowsTableProps) {
+function EmailRowsTable({ items, isSpam, blockedSet, rescuingId, onBlock, onRescue, onDelete }: EmailRowsTableProps) {
   return (
     <div className="rounded-lg border border-border/50 overflow-x-auto">
       <Table>
@@ -485,6 +533,15 @@ function EmailRowsTable({ items, isSpam, blockedSet, rescuingId, onBlock, onResc
                           <ShieldOff className="w-4 h-4 mr-2" />
                           Block Sender
                         </DropdownMenuItem>
+                        {onDelete && 'id' in email && (
+                          <DropdownMenuItem
+                            className="text-destructive focus:text-destructive"
+                            onClick={() => onDelete((email as Email).id, email.subject || '(No Subject)')}
+                          >
+                            <Trash2 className="w-4 h-4 mr-2" />
+                            Delete Email
+                          </DropdownMenuItem>
+                        )}
                       </DropdownMenuContent>
                     </DropdownMenu>
                   )}

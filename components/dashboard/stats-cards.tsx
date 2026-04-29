@@ -7,8 +7,6 @@ import {
   ShieldAlert,
   Bell,
   Activity,
-  TrendingUp,
-  TrendingDown,
   AlertTriangle,
   ShieldCheck,
 } from 'lucide-react'
@@ -24,38 +22,30 @@ export function StatsCards({ stats, lastScanAt }: StatsCardsProps) {
   const cards = [
     {
       title: 'Emails Scanned',
-      value: stats.totalEmailsScanned.toLocaleString(),
-      change: '+12%',
-      trend: 'up' as const,
       icon: Mail,
       color: 'primary',
-      subtitle: `${stats.emailsToday} today`,
+      value: stats.totalEmailsScanned.toLocaleString(),
+      subtitle: `${stats.emailsToday} scanned today`,
     },
     {
       title: 'Threats Detected',
-      value: stats.totalThreatsDetected.toLocaleString(),
-      change: '-8%',
-      trend: 'down' as const,
       icon: ShieldAlert,
       color: 'destructive',
-      subtitle: `${stats.threatsToday} today`,
+      value: stats.totalThreatsDetected.toLocaleString(),
+      subtitle: `${stats.threatsToday} detected today`,
     },
     {
       title: 'Active Alerts',
-      value: stats.activeAlerts.toLocaleString(),
-      change: '+3',
-      trend: 'up' as const,
       icon: Bell,
       color: 'warning',
-      subtitle: 'Requires attention',
+      value: stats.activeAlerts.toLocaleString(),
+      subtitle: stats.activeAlerts > 0 ? 'Requires attention' : 'All clear',
     },
     {
       title: 'Security Score',
-      value: `${stats.riskScore}%`,
-      change: '+5%',
-      trend: 'up' as const,
       icon: Activity,
       color: stats.riskScore >= 80 ? 'success' : stats.riskScore >= 60 ? 'warning' : 'destructive',
+      value: `${stats.riskScore}%`,
       subtitle: stats.riskScore >= 80 ? 'Excellent' : stats.riskScore >= 60 ? 'Good' : 'Needs Attention',
     },
   ]
@@ -110,30 +100,9 @@ export function StatsCards({ stats, lastScanAt }: StatsCardsProps) {
                   <p className="text-3xl font-bold tracking-tight">
                     {card.value}
                   </p>
-                  <div className="flex items-center gap-2">
-                    <span
-                      className={cn(
-                        'inline-flex items-center text-xs font-medium',
-                        card.trend === 'up'
-                          ? card.color === 'destructive' || card.title === 'Active Alerts'
-                            ? 'text-destructive'
-                            : 'text-green-500'
-                          : card.color === 'destructive'
-                          ? 'text-green-500'
-                          : 'text-destructive'
-                      )}
-                    >
-                      {card.trend === 'up' ? (
-                        <TrendingUp className="w-3 h-3 mr-1" />
-                      ) : (
-                        <TrendingDown className="w-3 h-3 mr-1" />
-                      )}
-                      {card.change}
-                    </span>
-                    <span className="text-xs text-muted-foreground">
-                      {card.subtitle}
-                    </span>
-                  </div>
+                  <span className="text-xs text-muted-foreground">
+                    {card.subtitle}
+                  </span>
                 </div>
                 <div className={cn('p-3 rounded-lg', colors.bg)}>
                   <card.icon className={cn('w-6 h-6', colors.text)} />

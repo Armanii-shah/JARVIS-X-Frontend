@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import type { User } from '@supabase/supabase-js'
 import { ThemeToggle } from '@/components/theme-toggle'
+import { Logo } from '@/components/logo'
 import type { Profile, Alert } from '@/lib/types'
 import { Button } from '@/components/ui/button'
 import {
@@ -18,18 +19,15 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import {
   Bell,
-  Search,
   LogOut,
   User as UserIcon,
   Settings,
-  Shield,
   Loader2,
   AlertTriangle,
   Info,
   CheckCircle,
   Menu,
 } from 'lucide-react'
-import { Input } from '@/components/ui/input'
 import { formatDistanceToNow } from 'date-fns'
 
 interface DashboardHeaderProps {
@@ -113,8 +111,8 @@ export function DashboardHeader({ user, profile, token, backendUrl, onMenuClick 
 
   return (
     <header className="h-16 bg-card border-b border-border flex items-center justify-between px-4 lg:px-6">
-      {/* Left: hamburger (mobile) + search (desktop) */}
-      <div className="flex items-center gap-3 flex-1 max-w-xl">
+      {/* Left: hamburger + mobile logo */}
+      <div className="flex items-center gap-3">
         <Button
           variant="ghost"
           size="icon"
@@ -124,12 +122,9 @@ export function DashboardHeader({ user, profile, token, backendUrl, onMenuClick 
         >
           <Menu className="w-5 h-5" />
         </Button>
-        <div className="relative flex-1 hidden lg:flex">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input
-            placeholder="Search emails, threats, alerts..."
-            className="pl-10 bg-input/50 border-border/50 focus:border-primary"
-          />
+        {/* Show logo on mobile when sidebar is hidden */}
+        <div className="lg:hidden">
+          <Logo href="/dashboard" size="sm" subtitle="" />
         </div>
       </div>
 
@@ -242,9 +237,11 @@ export function DashboardHeader({ user, profile, token, backendUrl, onMenuClick 
                 Settings
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Shield className="w-4 h-4 mr-2" />
-              Security
+            <DropdownMenuItem asChild>
+              <Link href="/dashboard/settings">
+                <Settings className="w-4 h-4 mr-2" />
+                Security Settings
+              </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem

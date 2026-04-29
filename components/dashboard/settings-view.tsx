@@ -57,7 +57,7 @@ export function SettingsView({ email, phone, plan, token, backendUrl }: Settings
     },
     {
       name: 'Pro',
-      price: '$20',
+      price: '$29',
       features: ['100 emails/day', 'Advanced AI detection', 'SMS & Push alerts', 'Priority support', 'API access'],
       current: plan === 'pro',
       popular: true,

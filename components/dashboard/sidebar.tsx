@@ -5,8 +5,8 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import type { Profile } from '@/lib/types'
+import { Logo } from '@/components/logo'
 import {
-  Shield,
   LayoutDashboard,
   Mail,
   AlertTriangle,
@@ -69,18 +69,7 @@ export function DashboardSidebar({ profile, token, backendUrl, onNavClick }: Das
     <aside className="w-64 bg-sidebar border-r border-sidebar-border flex flex-col">
       {/* Logo */}
       <div className="h-16 flex items-center px-6 border-b border-sidebar-border">
-        <Link href="/dashboard" className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center glow-cyan">
-            <Shield className="w-5 h-5 text-primary" />
-          </div>
-          <div>
-            <span className="text-lg font-bold">
-              <span className="text-primary">JARVIS</span>
-              <span className="text-sidebar-foreground">-X</span>
-            </span>
-            <p className="text-xs text-muted-foreground">Security Platform</p>
-          </div>
-        </Link>
+        <Logo href="/dashboard" size="md" subtitle="Security Platform" />
       </div>
 
       {/* Navigation */}

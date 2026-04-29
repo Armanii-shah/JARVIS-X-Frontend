@@ -22,21 +22,7 @@ export const metadata: Metadata = {
   keywords: ['email security', 'phishing detection', 'AI security', 'threat monitoring', 'cybersecurity'],
   authors: [{ name: 'JARVIS-X Security' }],
   icons: {
-    icon: [
-      {
-        url: '/icon-light-32x32.png',
-        media: '(prefers-color-scheme: light)',
-      },
-      {
-        url: '/icon-dark-32x32.png',
-        media: '(prefers-color-scheme: dark)',
-      },
-      {
-        url: '/icon.svg',
-        type: 'image/svg+xml',
-      },
-    ],
-    apple: '/apple-icon.png',
+    apple: '/logo.png',
   },
 }
 
